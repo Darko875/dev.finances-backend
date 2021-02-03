@@ -1,8 +1,6 @@
-const mongoose = require('mongoose')
 const User = require('../models/user')
-const Payments = require('../models/payments')
 const bcrypt = require('bcrypt')
-const { response } = require('express')
+const jwt = require("jsonwebtoken");
 
 module.exports = {
     async index(req,res) {
@@ -40,5 +38,30 @@ module.exports = {
             })
             })
         }
-    }
+    },
+    async authenticate (req,res) {
+        const {email, password} = req.body
+        //res.json({email: email, password: password})
+        User.findOne({
+            email: email
+          }).then(user => {
+            if (!user) {
+              return done(null, false, { message: 'That email is not registered' });
+            }
+    
+            // Match password
+            bcrypt.compare(password, user.password, (isMatch) => {
+              if (isMatch) {
+                let token = jwt.sign({ id: user.id }, process.env.JWT_KEY, {
+                    expiresIn: 86400 // 24 hours
+                })
+                res.header({token: token})
+                return res.status(200).json({email: user.email, token: token})
+              } else {
+                return res.json({ message: 'Password incorrect' })
+              }
+            })
+          })
+    },
+    
 }
