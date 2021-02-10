@@ -2,6 +2,13 @@ const User = require('../models/user')
 const bcrypt = require('bcrypt')
 const jwt = require("jsonwebtoken");
 
+function generateToken(params = {}){
+  return jwt.sign(params, process.env.JWT_KEY, {
+      expiresIn: 86400 // 24 hours
+  })
+}
+
+
 module.exports = {
     async index(req,res) {
         let users = await User.find({})
@@ -31,7 +38,7 @@ module.exports = {
                 newUser
                     .save()
                     .then(user => {
-                        res.status(200).json('Utilizador ' + user.name + ' criado!')
+                        res.status(200).send({user: user.name, token: generateToken({ id: user.id })})
                     })
                     .catch(err => res.status(400).json(err));
                 })
@@ -46,17 +53,14 @@ module.exports = {
             email: email
           }).then(user => {
             if (!user) {
-              return done(null, false, { message: 'That email is not registered' });
+              return res.status(400).json('That email is not registered')
             }
     
             // Match password
             bcrypt.compare(password, user.password, (isMatch) => {
               if (isMatch) {
-                let token = jwt.sign({ id: user.id }, process.env.JWT_KEY, {
-                    expiresIn: 86400 // 24 hours
-                })
-                res.header({token: token})
-                return res.status(200).json({email: user.email, token: token})
+                
+                return res.status(200).json({email: user.email, token: generateToken({ id: user.id })})
               } else {
                 return res.json({ message: 'Password incorrect' })
               }
