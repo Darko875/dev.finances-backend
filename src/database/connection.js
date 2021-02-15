@@ -11,4 +11,5 @@ mongoose.connect(DATABASE_URL, { useUnifiedTopology: true, useNewUrlParser: true
 
 const connection = mongoose.connection;
 
+
 module.exports = connection

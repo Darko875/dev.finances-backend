@@ -1,5 +1,6 @@
 const Payments = require('../models/payments')
 const mongoose = require('mongoose')
+const { db } = require('../models/payments')
 
 
 module.exports = {
@@ -12,9 +13,9 @@ module.exports = {
     },
 
     async create (req,res) {
-        const { type, value, status } = req.body;
+        const { type, value, status, date } = req.body;
         try {
-            if (!type || !value || !status){
+            if (!type || !value || !status || !date){
                 return res.status(400).json({error: 'Forgot one category.'})
             }
             const user_id = req.userId;
@@ -22,6 +23,7 @@ module.exports = {
                 type: type, 
                 value: value, 
                 status: status,
+                date: date,
                 user: user_id
             })
 
@@ -43,14 +45,40 @@ module.exports = {
     },
 
     async sum_earnings(req,res){
-
-    },
-
-    async sum_losses(req,res){
-
+        Payments.aggregate([
+            {
+                '$group': {
+                  '_id': '$status', 
+                  'totalamount': {
+                    '$sum': '$value'
+                  }
+                }
+            }
+        ],function(err,result) {
+            if(err){
+                return res.status(400).send(err)
+            }
+            return res.status(200).send(result)
+        
+        })
     },
 
     async sum_total(req,res){
-
+        Payments.aggregate([
+            {
+                '$group': {
+                    '_id': '',
+                    'totalamount': {
+                        '$sum': '$value'
+                  }
+                }
+            }
+        ],function(err,result) {
+            if(err){
+                return res.status(400).send(err)
+            }
+            return res.status(200).send(result)
+        
+        })
     },
 }

@@ -4,7 +4,7 @@ const routes = express.Router()
 const SystemController = require('./controllers/SystemController')
 const PaymentController = require('./controllers/PaymentController')
 const authMiddleware = require('./middlewares/auth')
-const { Router } = require('express')
+
 
 
 routes.get('/', SystemController.index)
@@ -16,6 +16,8 @@ routes.post('/reset-password', SystemController.reset_password)
 routes.get('/payments', authMiddleware, PaymentController.index)
 routes.post('/create-payment', authMiddleware, PaymentController.create)
 routes.post('/payments/:id', authMiddleware, PaymentController.delete)
+routes.get('/sum-earnings',  authMiddleware, PaymentController.sum_earnings)
+routes.get('/sum-total',  authMiddleware, PaymentController.sum_total)
 
 
 module.exports = routes;
