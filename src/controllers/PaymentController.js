@@ -45,7 +45,11 @@ module.exports = {
     },
 
     async sum_earnings(req,res){
+        const user_id = req.userId;
         Payments.aggregate([
+            { "$match": {
+                user:  mongoose.Types.ObjectId(user_id)
+            }},
             {
                 '$group': {
                   '_id': '$status', 
@@ -64,7 +68,11 @@ module.exports = {
     },
 
     async sum_total(req,res){
+        const user_id = req.userId;
         Payments.aggregate([
+            { "$match": {
+                user:  mongoose.Types.ObjectId(user_id)
+            }},
             {
                 '$group': {
                     '_id': '',
