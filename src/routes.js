@@ -15,7 +15,7 @@ routes.post('/reset-password', SystemController.reset_password)
 
 routes.get('/payments', authMiddleware, PaymentController.index)
 routes.post('/create-payment', authMiddleware, PaymentController.create)
-routes.post('/payments/:id', authMiddleware, PaymentController.delete)
+routes.delete('/payments/:id', authMiddleware, PaymentController.delete)
 routes.get('/sum-earnings',  authMiddleware, PaymentController.sum_earnings)
 routes.get('/sum-total',  authMiddleware, PaymentController.sum_total)
 

@@ -13,10 +13,17 @@ module.exports = {
     },
 
     async create (req,res) {
-        const { type, value, status, date } = req.body;
+        const { type, value, date } = req.body;
+        let status = ""
         try {
-            if (!type || !value || !status || !date){
+            if (!type || !value || !date){
                 return res.status(400).json({error: 'Forgot one category.'})
+            }
+
+            if(value < 0){
+                status = "Saída"
+            }else{
+                status = "Entrada"
             }
             const user_id = req.userId;
             const newPayments = new Payments({

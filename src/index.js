@@ -9,7 +9,7 @@ const app = express()
 const connection = require('./database/connection')
 const routes = require('./routes')
 
-app.use(cors());
+app.use(cors({origin: true, credentials: true}));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(routes)
